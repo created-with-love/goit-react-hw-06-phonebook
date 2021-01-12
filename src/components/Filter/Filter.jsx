@@ -1,6 +1,9 @@
 import React from 'react';
-import s from './Filter.module.css';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+
+import actions from '../../redux/contacts/contacts-action';
+import s from './Filter.module.css';
 
 const Filter = ({ value, onChange }) => (
   <label htmlFor="search" className={s.Search__box}>
@@ -20,4 +23,13 @@ Filter.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
 };
-export default Filter;
+
+const mapStateToProps = state => ({
+  value: state.contacts.filter,
+});
+
+const mapDispatchToProps = dispatch => ({
+  onChange: e => dispatch(actions.addFilter(e.currentTarget.value)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Filter);

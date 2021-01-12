@@ -49,8 +49,11 @@
   max-width: 100%;
   background-color: rgba(251, 251, 251, 0.9);
   margin-top: 8px;
-  border: 1px solid gray;
   border-radius: 4px;
+}
+
+.list-border {
+  border: 1px solid gray;
 }
 
 .list__ul {

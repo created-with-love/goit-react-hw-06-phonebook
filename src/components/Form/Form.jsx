@@ -1,8 +1,11 @@
-import { useState, useRef, memo } from 'react';
-import s from './Form.module.css';
+import { useState, useRef } from 'react';
+import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 
-function Form({ onSubmit }) {
+import s from './Form.module.css';
+import actions from '../../redux/contacts/contacts-action';
+
+function Form({ onSubmit, contacts }) {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -29,13 +32,24 @@ function Form({ onSubmit }) {
     setName('');
     setNumber('');
   };
+
+  const validateContact = (contactName, contacts) => {
+    if (contacts.some(({ name }) => name === contactName)) {
+      alert(`${contactName} is already in contacts.`);
+      return false;
+    } else return true;
+  };
+
   // для получения данных из формы в App.js во время сабмита
   // использую метод с поднятием состояния в родитель
   const handleSubmit = e => {
     e.preventDefault();
+    const isContactValid = validateContact(name, contacts);
 
-    onSubmit({ name: name, number: number });
-    reset();
+    if (isContactValid) {
+      onSubmit(name, number);
+      reset();
+    }
   };
 
   return (
@@ -82,4 +96,12 @@ function Form({ onSubmit }) {
   );
 }
 
-export default memo(Form);
+const mapStateToProps = state => ({
+  contacts: state.contacts.items,
+});
+
+const mapDispatchToProps = dispatch => ({
+  onSubmit: (name, number) => dispatch(actions.addContact(name, number)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Form);

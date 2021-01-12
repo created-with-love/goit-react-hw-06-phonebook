@@ -1,9 +1,21 @@
 import { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
+import { motion } from 'framer-motion';
 
 import s from './Form.module.css';
 import actions from '../../redux/contacts/contacts-action';
+
+const variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.5,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+  },
+};
 
 function Form({ onSubmit, contacts }) {
   const [name, setName] = useState('');
@@ -54,7 +66,13 @@ function Form({ onSubmit, contacts }) {
 
   return (
     <div className={s.container}>
-      <form className={s.form} onSubmit={handleSubmit}>
+      <motion.form
+        initial="hidden"
+        animate="visible"
+        variants={variants}
+        className={s.form}
+        onSubmit={handleSubmit}
+      >
         <label htmlFor={nameId.current}>
           <p className={s.form__label}>Name</p>
           <input
@@ -75,11 +93,11 @@ function Form({ onSubmit, contacts }) {
             name="number"
             value={number}
             onChange={handleInputChange}
-            maxLength="9"
+            maxLength="13"
             minLength="7"
-            pattern="[0-9]{3}-{0,1}[0-9]{2}-{0,1}[0-9]{2}"
+            pattern="[0-9]{3}-*{0,1}[0-9]{3}-*{0,1}[0-9]{2}-*{0,1}[0-9]{2}"
             required
-            placeholder="123-45-67"
+            placeholder="068-88-88-88"
           />
         </label>
         <div className={s.submit__box}>
@@ -91,7 +109,7 @@ function Form({ onSubmit, contacts }) {
             Add contact
           </button>
         </div>
-      </form>
+      </motion.form>
     </div>
   );
 }

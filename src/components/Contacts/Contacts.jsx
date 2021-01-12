@@ -4,8 +4,20 @@ import { FaTrash, FaAddressCard } from 'react-icons/fa';
 import { IconContext } from 'react-icons';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { motion } from 'framer-motion';
 import s from './Contacts.module.css';
 import actions from '../../redux/contacts/contacts-action';
+
+const variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.7,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+  },
+};
 
 const Contacts = ({ contacts, onDeleteBtnClick }) => {
   const listClasses = classNames({
@@ -17,7 +29,13 @@ const Contacts = ({ contacts, onDeleteBtnClick }) => {
     <div className={listClasses}>
       <ul className={s.list__ul}>
         {contacts.map(person => (
-          <li key={person.id} className={s.search__contact}>
+          <motion.li
+            initial="hidden"
+            animate="visible"
+            variants={variants}
+            key={person.id}
+            className={s.search__contact}
+          >
             <IconContext.Provider
               value={{
                 color: 'black',
@@ -27,7 +45,9 @@ const Contacts = ({ contacts, onDeleteBtnClick }) => {
             >
               <FaAddressCard onClick={() => onDeleteBtnClick(person.id)} />
             </IconContext.Provider>
-            {person.name} : {person.number}
+            <p className={s.search__text}>
+              {person.name} : {person.number}
+            </p>
             <div className={s.trash}>
               <IconContext.Provider
                 value={{
@@ -39,7 +59,7 @@ const Contacts = ({ contacts, onDeleteBtnClick }) => {
                 <FaTrash onClick={() => onDeleteBtnClick(person.id)} />
               </IconContext.Provider>
             </div>
-          </li>
+          </motion.li>
         ))}
       </ul>
     </div>

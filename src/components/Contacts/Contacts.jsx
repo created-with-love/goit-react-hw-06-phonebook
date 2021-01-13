@@ -1,12 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FaTrash, FaAddressCard } from 'react-icons/fa';
 import { IconContext } from 'react-icons';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { motion } from 'framer-motion';
 import s from './Contacts.module.css';
 import actions from '../../redux/contacts/contacts-action';
+import { filteredContacts } from '../../redux/contacts/contacts-selectors';
 
 const variants = {
   hidden: {
@@ -19,7 +19,10 @@ const variants = {
   },
 };
 
-const Contacts = ({ contacts, onDeleteBtnClick }) => {
+const Contacts = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(filteredContacts);
+
   const listClasses = classNames({
     [s.list]: true,
     'list-border': contacts.length,
@@ -43,7 +46,9 @@ const Contacts = ({ contacts, onDeleteBtnClick }) => {
                 className: 'react-icons',
               }}
             >
-              <FaAddressCard onClick={() => onDeleteBtnClick(person.id)} />
+              <FaAddressCard
+                onClick={() => dispatch(actions.deleteContact(person.id))}
+              />
             </IconContext.Provider>
             <p className={s.search__text}>
               {person.name} : {person.number}
@@ -56,7 +61,9 @@ const Contacts = ({ contacts, onDeleteBtnClick }) => {
                   className: 'react-icons',
                 }}
               >
-                <FaTrash onClick={() => onDeleteBtnClick(person.id)} />
+                <FaTrash
+                  onClick={() => dispatch(actions.deleteContact(person.id))}
+                />
               </IconContext.Provider>
             </div>
           </motion.li>
@@ -66,28 +73,4 @@ const Contacts = ({ contacts, onDeleteBtnClick }) => {
   );
 };
 
-Contacts.propTypes = {
-  contacts: PropTypes.arrayOf(PropTypes.object),
-  onDeleteBtnClick: PropTypes.func.isRequired,
-};
-
-const filteredContacts = (contacts, filter) => {
-  const getFiltredContacts = contacts => {
-    const lowerCaseFilter = filter.toLowerCase();
-    return contacts.filter(person =>
-      person.name.toLowerCase().includes(lowerCaseFilter),
-    );
-  };
-  return getFiltredContacts(contacts);
-};
-
-const mapStateToProps = state => ({
-  contacts: filteredContacts(state.contacts.items, state.contacts.filter),
-  // contacts: state.contacts.items,
-});
-
-const mapDispatchToProps = dispatch => ({
-  onDeleteBtnClick: id => dispatch(actions.deleteContact(id)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Contacts);
+export default Contacts;

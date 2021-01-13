@@ -1,10 +1,11 @@
 import { useState, useRef } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { motion } from 'framer-motion';
 
 import s from './Form.module.css';
 import actions from '../../redux/contacts/contacts-action';
+import { getItems } from '../../redux/contacts/contacts-selectors';
 
 const variants = {
   hidden: {
@@ -17,7 +18,12 @@ const variants = {
   },
 };
 
-function Form({ onSubmit, contacts }) {
+function Form() {
+  const contacts = useSelector(getItems);
+  const dispatch = useDispatch();
+
+  const onSubmit = (name, number) => dispatch(actions.addContact(name, number));
+
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -93,11 +99,11 @@ function Form({ onSubmit, contacts }) {
             name="number"
             value={number}
             onChange={handleInputChange}
-            maxLength="13"
+            maxLength="17"
             minLength="7"
-            pattern="[0-9]{3}-*{0,1}[0-9]{3}-*{0,1}[0-9]{2}-*{0,1}[0-9]{2}"
+            pattern="[0-9]{3}-{0,1}[0-9]{3}-{0,1}[0-9]{2}-{0,1}[0-9]{2}"
             required
-            placeholder="068-88-88-88"
+            placeholder="(067)666-66-66"
           />
         </label>
         <div className={s.submit__box}>
@@ -114,12 +120,4 @@ function Form({ onSubmit, contacts }) {
   );
 }
 
-const mapStateToProps = state => ({
-  contacts: state.contacts.items,
-});
-
-const mapDispatchToProps = dispatch => ({
-  onSubmit: (name, number) => dispatch(actions.addContact(name, number)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Form);
+export default Form;

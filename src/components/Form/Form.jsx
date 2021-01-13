@@ -1,8 +1,29 @@
-import { useState, useRef, memo } from 'react';
-import s from './Form.module.css';
+import { useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
+import { motion } from 'framer-motion';
 
-function Form({ onSubmit }) {
+import s from './Form.module.css';
+import actions from '../../redux/contacts/contacts-action';
+import { getItems } from '../../redux/contacts/contacts-selectors';
+
+const variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.5,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+  },
+};
+
+function Form() {
+  const contacts = useSelector(getItems);
+  const dispatch = useDispatch();
+
+  const onSubmit = (name, number) => dispatch(actions.addContact(name, number));
+
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -29,18 +50,35 @@ function Form({ onSubmit }) {
     setName('');
     setNumber('');
   };
+
+  const validateContact = (contactName, contacts) => {
+    if (contacts.some(({ name }) => name === contactName)) {
+      alert(`${contactName} is already in contacts.`);
+      return false;
+    } else return true;
+  };
+
   // для получения данных из формы в App.js во время сабмита
   // использую метод с поднятием состояния в родитель
   const handleSubmit = e => {
     e.preventDefault();
+    const isContactValid = validateContact(name, contacts);
 
-    onSubmit({ name: name, number: number });
-    reset();
+    if (isContactValid) {
+      onSubmit(name, number);
+      reset();
+    }
   };
 
   return (
     <div className={s.container}>
-      <form className={s.form} onSubmit={handleSubmit}>
+      <motion.form
+        initial="hidden"
+        animate="visible"
+        variants={variants}
+        className={s.form}
+        onSubmit={handleSubmit}
+      >
         <label htmlFor={nameId.current}>
           <p className={s.form__label}>Name</p>
           <input
@@ -61,11 +99,11 @@ function Form({ onSubmit }) {
             name="number"
             value={number}
             onChange={handleInputChange}
-            maxLength="9"
+            maxLength="17"
             minLength="7"
-            pattern="[0-9]{3}-{0,1}[0-9]{2}-{0,1}[0-9]{2}"
+            pattern="[0-9]{3}-{0,1}[0-9]{3}-{0,1}[0-9]{2}-{0,1}[0-9]{2}"
             required
-            placeholder="123-45-67"
+            placeholder="(067)666-66-66"
           />
         </label>
         <div className={s.submit__box}>
@@ -77,9 +115,9 @@ function Form({ onSubmit }) {
             Add contact
           </button>
         </div>
-      </form>
+      </motion.form>
     </div>
   );
 }
 
-export default memo(Form);
+export default Form;

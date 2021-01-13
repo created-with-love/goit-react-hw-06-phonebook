@@ -1,40 +1,76 @@
 import React from 'react';
-import s from './Contacts.module.css';
-import PropTypes from 'prop-types';
 import { FaTrash, FaAddressCard } from 'react-icons/fa';
 import { IconContext } from 'react-icons';
+import { useSelector, useDispatch } from 'react-redux';
+import classNames from 'classnames';
+import { motion } from 'framer-motion';
+import s from './Contacts.module.css';
+import actions from '../../redux/contacts/contacts-action';
+import { filteredContacts } from '../../redux/contacts/contacts-selectors';
 
-const Contacts = ({ contacts, onDeleteBtnClick }) => (
-  <div className={s.list}>
-    <ul className={s.list__ul}>
-      {contacts.map(person => (
-        <li key={person.id} className={s.search__contact}>
-          <IconContext.Provider
-            value={{ color: 'black', size: '1.6em', className: 'react-icons' }}
+const variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.7,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+  },
+};
+
+const Contacts = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(filteredContacts);
+
+  const listClasses = classNames({
+    [s.list]: true,
+    'list-border': contacts.length,
+  });
+
+  return (
+    <div className={listClasses}>
+      <ul className={s.list__ul}>
+        {contacts.map(person => (
+          <motion.li
+            initial="hidden"
+            animate="visible"
+            variants={variants}
+            key={person.id}
+            className={s.search__contact}
           >
-            <FaAddressCard onClick={() => onDeleteBtnClick(person.id)} />
-          </IconContext.Provider>
-          {person.name} : {person.number}
-          <div className={s.trash}>
             <IconContext.Provider
               value={{
-                color: 'red',
-                size: '1.1em',
+                color: 'black',
+                size: '1.6em',
                 className: 'react-icons',
               }}
             >
-              <FaTrash onClick={() => onDeleteBtnClick(person.id)} />
+              <FaAddressCard
+                onClick={() => dispatch(actions.deleteContact(person.id))}
+              />
             </IconContext.Provider>
-          </div>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
-
-Contacts.propTypes = {
-  contacts: PropTypes.arrayOf(PropTypes.object),
-  onDeleteBtnClick: PropTypes.func.isRequired,
+            <p className={s.search__text}>
+              {person.name} : {person.number}
+            </p>
+            <div className={s.trash}>
+              <IconContext.Provider
+                value={{
+                  color: 'red',
+                  size: '1.1em',
+                  className: 'react-icons',
+                }}
+              >
+                <FaTrash
+                  onClick={() => dispatch(actions.deleteContact(person.id))}
+                />
+              </IconContext.Provider>
+            </div>
+          </motion.li>
+        ))}
+      </ul>
+    </div>
+  );
 };
 
 export default Contacts;

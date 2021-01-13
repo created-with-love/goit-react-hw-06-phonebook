@@ -1,19 +1,19 @@
 .search__contact {
   position: relative;
   display: flex;
+  box-sizing: border-box;
   justify-content: space-between;
-  list-style: circle;
-  /* align-items: baseline; */
+  list-style: none;
+  align-items: center;
   font-family: 'Roboto', sans-serif;
   font-size: 18px;
   line-height: 1.5;
   padding: 7px 5px 7px 5px;
   max-width: 100%;
-  margin: o auto o auto;
 }
 
 .search__contact:not(:last-child) {
-  margin-bottom: 3px;
+  margin: 0 0 3px 0;
   border-bottom: 1px solid gray;
 }
 
@@ -49,8 +49,11 @@
   max-width: 100%;
   background-color: rgba(251, 251, 251, 0.9);
   margin-top: 8px;
-  border: 1px solid gray;
   border-radius: 4px;
+}
+
+.list-border {
+  border: 1px solid gray;
 }
 
 .list__ul {
@@ -74,6 +77,12 @@
 .trash:hover {
   cursor: pointer;
   background-color: rgba(236, 143, 143, 0.5);
+}
+
+.search__text {
+  text-align: center;
+  margin: 0;
+  padding: 5px;
 }
 
 @media (max-width: 385px) {

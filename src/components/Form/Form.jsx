@@ -2,10 +2,12 @@ import { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { motion } from 'framer-motion';
+import PhoneInput from 'react-phone-input-2';
 
 import s from './Form.module.css';
 import actions from '../../redux/contacts/contacts-action';
 import { getItems } from '../../redux/contacts/contacts-selectors';
+import 'react-phone-input-2/lib/style.css';
 
 const variants = {
   hidden: {
@@ -30,21 +32,11 @@ function Form() {
   const nameId = useRef(uuidv4());
 
   const handleInputChange = event => {
-    const { name, value } = event.currentTarget;
-
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
-
-      case 'number':
-        setNumber(value);
-        break;
-
-      default:
-        return;
-    }
+    const { value } = event.currentTarget;
+    setName(value);
   };
+
+  const handlePhoneInput = phone => setNumber(phone);
 
   const reset = () => {
     setName('');
@@ -92,18 +84,19 @@ function Form() {
             required
           />
         </label>
-        <label>
+        <label className={s.phoneLabel}>
           <p className={s.form__label}>Number</p>
-          <input
-            type="tel"
+          <PhoneInput
             name="number"
             value={number}
-            onChange={handleInputChange}
-            maxLength="17"
-            minLength="7"
-            pattern="[0-9]{3}-{0,1}[0-9]{3}-{0,1}[0-9]{2}-{0,1}[0-9]{2}"
-            required
-            placeholder="(067)666-66-66"
+            onChange={handlePhoneInput}
+            country={'ua'}
+            placeholder="+38068-555-55-55"
+            enableSearch={true}
+            disableSearchIcon={true}
+            containerClass={s.phoneContainer}
+            buttonClass={s.phoneButton}
+            inputClass={s.phoneInput}
           />
         </label>
         <div className={s.submit__box}>
